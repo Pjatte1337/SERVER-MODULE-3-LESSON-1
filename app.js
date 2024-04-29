@@ -1,11 +1,13 @@
 var createError = require('http-errors');
+require('dotenv').config()
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var fileUpload = require('express-fileupload'); // Import express-fileupload middleware
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var picturesRouter = require('./routes/pictures');
 
 var app = express();
 
@@ -18,11 +20,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'pictures'))); // Serve files from the 'pictures' folder
 
+// Mount the fileUpload middleware
+app.use(fileUpload());
+
+// Define routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/pictures', picturesRouter);
 
-// catch 404 and forward to error handler
+// catch 404 and forward to the error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
